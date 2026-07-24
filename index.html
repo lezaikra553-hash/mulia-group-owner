@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Owner & Investor Lite V1 - Mulia Group</title>
+<style>
+body{font-family:Arial,sans-serif;background:#eef2f7;margin:0}
+header{background:#0f3d75;color:#fff;padding:16px}
+.container{max-width:1200px;margin:auto;padding:20px}
+.card{background:#fff;border-radius:12px;padding:16px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+input,select{padding:8px;width:100%;margin:4px 0}
+button{padding:10px 16px;background:#0f62fe;color:#fff;border:0;border-radius:6px;cursor:pointer}
+table{width:100%;border-collapse:collapse}
+th,td{border:1px solid #ccc;padding:8px;text-align:left}
+th{background:#f5f5f5}
+.right{text-align:right}
+</style>
+</head>
+<body>
+<header>
+<h2>Mulia Group - Owner & Investor Lite V1</h2>
+</header>
+<div class="container">
+
+<div class="card">
+<h3>Input Rekap Bulanan</h3>
+<div class="grid">
+<div><label>Perusahaan</label>
+<select id="company">
+<option>Berkah Mulia</option>
+<option>Dwi Mulia Advertising</option>
+<option>Azkia Mulia Perada</option>
+</select></div>
+<div><label>Bulan</label><input id="bulan" value="Juli 2026"></div>
+<div><label>Omzet</label><input id="omzet" type="number" value="0"></div>
+<div><label>Material</label><input id="material" type="number" value="0"></div>
+<div><label>Gaji</label><input id="gaji" type="number" value="0"></div>
+<div><label>Operasional</label><input id="operasional" type="number" value="0"></div>
+<div><label>Lain-lain</label><input id="lain" type="number" value="0"></div>
+</div>
+<button onclick="hitung()">Hitung Laba Bersih</button>
+<h2 id="hasil">Laba Bersih : Rp 0</h2>
+</div>
+
+<div class="card">
+<h3>Investor</h3>
+<table id="tbl">
+<thead><tr><th>Nama</th><th>%</th><th>Hak Profit</th></tr></thead>
+<tbody>
+<tr><td><input value="Abdul Aziz"></td><td><input type="number" value="60"></td><td class="hak">Rp0</td></tr>
+<tr><td><input value="Sentot"></td><td><input type="number" value="10"></td><td class="hak">Rp0</td></tr>
+<tr><td><input value="Tabungan Bersama"></td><td><input type="number" value="30"></td><td class="hak">Rp0</td></tr>
+</tbody>
+</table>
+<br>
+<button onclick="tambah()">+ Tambah Investor</button>
+<button onclick="window.print()">Print / Save PDF</button>
+</div>
+
+<div class="card">
+<h3>Laporan</h3>
+<div id="laporan">Belum dihitung.</div>
+</div>
+
+</div>
+
+<script>
+let laba=0;
+function rupiah(x){return "Rp "+Number(x).toLocaleString("id-ID")}
+function hitung(){
+let omzet=+omzet.value;
+let material=+material.value;
+let gaji=+gaji.value;
+let operasional=+operasional.value;
+let lain=+lain.value;
+laba=omzet-material-gaji-operasional-lain;
+hasil.innerHTML="Laba Bersih : "+rupiah(laba);
+
+let rows=document.querySelectorAll("#tbl tbody tr");
+let html="<h3>"+company.value+"</h3>";
+html+="<p>Periode : "+bulan.value+"</p>";
+html+="<table><tr><th>Investor</th><th>%</th><th>Hak</th></tr>";
+rows.forEach(r=>{
+let p=+r.cells[1].querySelector("input").value;
+let hak=laba*p/100;
+r.querySelector(".hak").innerHTML=rupiah(hak);
+html+="<tr><td>"+r.cells[0].querySelector("input").value+"</td><td>"+p+"%</td><td>"+rupiah(hak)+"</td></tr>";
+});
+html+="</table><br><b>Omzet :</b> "+rupiah(omzet)+"<br>";
+html+="<b>Laba Bersih :</b> "+rupiah(laba);
+laporan.innerHTML=html;
+}
+function tambah(){
+let tr=document.createElement("tr");
+tr.innerHTML='<td><input placeholder="Nama"></td><td><input type="number" value="0"></td><td class="hak">Rp0</td>';
+document.querySelector("#tbl tbody").appendChild(tr);
+}
+</script>
+</body>
+</html>
