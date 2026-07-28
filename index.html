@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#0f172a">
-<title>Mulia Group Owner Dashboard — FINAL FIX</title>
+<title>Mulia Group Owner Dashboard — LOGIN TETAP FINAL</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
@@ -33,6 +33,7 @@
 .syncBadge.error{background:#fee2e2;color:#b91c1c}
 .statusMini #autoSyncStatus{color:#93c5fd;font-size:9px}
 </style>
+<meta name="mulia-persistent-login" content="enabled-until-logout">
 </head>
 <body>
 <div id="loginGate"><div class="loginBox"><div class="loginLogo">MG</div><h1>Mulia Group Owner</h1><p>Dashboard konsolidasi read-only untuk CV. Berkah Mulia ADV, PT. Dwi Mulia Advertising, dan PT. Azkia Mulia Perada.</p><div class="field"><label>Password Aplikasi</label><input id="loginPass" type="password" placeholder="Masukkan password" onkeydown="if(event.key==='Enter')appLogin()"></div><button class="btn primary block" onclick="appLogin()">Masuk Dashboard Owner</button><div id="loginError" class="loginError">Password salah.</div></div></div>
@@ -129,7 +130,7 @@ async function appLogin(){
     document.getElementById('loginError').style.display='block';
     return;
   }
-  sessionStorage.setItem('MULIA_OWNER_LOGIN','1');
+  localStorage.setItem('MULIA_OWNER_LOGIN','1');
   document.getElementById('loginGate').classList.add('hidden');
   loadCache();
   renderAll();
@@ -139,7 +140,7 @@ async function appLogin(){
     startOwnerAutoSync();
   }
 }
-function logoutApp(){stopOwnerAutoSync();sessionStorage.removeItem('MULIA_OWNER_LOGIN');sessionStorage.removeItem(TOKEN_KEY);sessionStorage.removeItem(EMAIL_KEY);location.reload()}
+function logoutApp(){stopOwnerAutoSync();localStorage.removeItem('MULIA_OWNER_LOGIN');sessionStorage.removeItem(TOKEN_KEY);sessionStorage.removeItem(EMAIL_KEY);location.reload()}
 function openPage(name,btn){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById('page-'+name)?.classList.add('active');document.querySelectorAll('.navBtn').forEach(x=>x.classList.remove('active'));btn?.classList.add('active');const fn={dashboard:renderDashboard,companies:renderCompanies,documents:renderDocuments,cash:renderCash,receivables:renderReceivables,projects:renderProjects,hr:renderHR,profit:renderProfit,reports:renderReports}[name];if(fn)fn()}
 function updateGoogleUI(msg){
   const on=!!token;
@@ -445,7 +446,7 @@ function exportReceivableCSV(){const r=Object.keys(CONFIG).flatMap(docsOf).filte
 function exportHRCSV(){const r=Object.keys(CONFIG).flatMap(employeesOf);csvDownload('Mulia_Group_SDM_Payroll.csv',['Perusahaan','Nama','Jabatan','Periode','Gaji Pokok','Estimasi Bersih'],r.map(x=>[CONFIG[x.code].name,x.name,x.role,x.period,x.salary,x.net]))}
 function exportSnapshot(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({app:'Mulia Group Owner',version:'V2 FINAL FIX',createdAt:new Date().toISOString(),readOnly:true,companies:DATA,summary:aggregate()},null,2)],{type:'application/json'}));a.download='Mulia_Group_Owner_Snapshot_'+new Date().toISOString().slice(0,10)+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 window.addEventListener('DOMContentLoaded',()=>{
-  const logged=sessionStorage.getItem('MULIA_OWNER_LOGIN')==='1';
+  const logged=localStorage.getItem('MULIA_OWNER_LOGIN')==='1';
   if(logged)document.getElementById('loginGate').classList.add('hidden');
   loadCache();
   renderAll();
