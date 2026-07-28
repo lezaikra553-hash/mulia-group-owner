@@ -112,7 +112,7 @@ let googleEmail=sessionStorage.getItem(EMAIL_KEY)||'';
 let OWNER_SYNC_TIMER=null;
 let OWNER_SYNC_BUSY=false;
 let OWNER_LAST_SYNC=0;
-const OWNER_SYNC_INTERVAL=60000;
+const OWNER_SYNC_INTERVAL=5000;
 const OWNER_STALE_MINUTES=15;
 
 function num(v){const n=Number(v);return Number.isFinite(n)?n:0}
@@ -487,5 +487,62 @@ if('serviceWorker' in navigator){
 }
 
 </script>
+
+<!-- OWNER REALTIME + STRUCTURE PATCH V3.0: original storage/database remains unchanged -->
+<script id="owner-realtime-structure-v3">
+(function(){
+'use strict';
+function addUnique(arr,vals){vals.forEach(v=>{if(!arr.includes(v))arr.unshift(v)})}
+try{
+ addUnique(CONFIG.BERKAH.enterprise,['BM_ENTERPRISE_V1','BM_ENTERPRISE_V2']);
+ addUnique(CONFIG.DWI.enterprise,['DMA_ENTERPRISE_V1','DMA_ENTERPRISE_V2']);
+ addUnique(CONFIG.AZKIA.enterprise,['AP_ENTERPRISE_V1','AP_ENTERPRISE_V2']);
+ addUnique(CONFIG.BERKAH.snapshot,['BM_OWNER_SNAPSHOT_V3','BM_OWNER_SNAPSHOT_V1']);
+ addUnique(CONFIG.DWI.snapshot,['DM_OWNER_SNAPSHOT_V3','DM_OWNER_SNAPSHOT_V1']);
+ addUnique(CONFIG.AZKIA.snapshot,['AP_OWNER_SNAPSHOT_V3','AP_OWNER_SNAPSHOT_V1']);
+ addUnique(CONFIG.BERKAH.piece,['BM_BORONGAN_V1','BERKAH_MULIA_BORONGAN_V1']);
+}catch(e){console.warn(e)}
+const monthNames=['januari','februari','maret','april','mei','juni','juli','agustus','september','oktober','november','desember'];
+function monthProfit(code,period){
+ const c=getCompany(code), tx=c.cash?.transactions||{}, key=period||monthNames[new Date().getMonth()], m=tx[key]||{};
+ const sum=a=>(Array.isArray(a)?a:[]).reduce((s,x)=>s+num(x.amount??x.nominal??x.total),0);
+ const income=sum(m.pemasukan), expense=sum(m.operasional)+sum(m.pengeluaran)+(code==='BERKAH'?(sum(m.indra)+sum(m.andre)+sum(m.borongan)):0);
+ return {period:key,income,expense,profit:income-expense};
+}
+profitRowsOf=function(code){
+ const c=getCompany(code),p=c.profit||{},shares=Array.isArray(p.shares)?p.shares:Array.isArray(p.recipients)?p.recipients:Array.isArray(p.penerima)?p.penerima:[];
+ const period=p.period||monthNames[new Date().getMonth()], mp=monthProfit(code,period);
+ return shares.map(x=>({code,name:x.name??x.nama??x.label??'-',pct:num(x.percent??x.pct??x.persentase),period,amount:Math.max(0,mp.profit)*num(x.percent??x.pct??x.persentase)/100,monthlyProfit:mp.profit}));
+};
+const oldProjectsOf=projectsOf;
+projectsOf=function(code){
+ const c=getCompany(code),p=Array.isArray(c.enterprise?.projects)?c.enterprise.projects:[];
+ if(p.length)return p.map(x=>({code,name:x.name??x.project??'-',customer:x.customer??'-',status:x.status??'Penawaran',source:x.integrationManaged?'Pipeline Terintegrasi':'Data Project',value:num(x.value??x.total),quoteNo:x.quoteNo||'',invoiceNo:x.invoiceNo||'',paid:num(x.paid),outstanding:num(x.outstanding)}));
+ return oldProjectsOf(code);
+};
+renderDashboard=function(){
+ const a=aggregate();
+ const monthly=Object.keys(CONFIG).map(c=>monthProfit(c)).reduce((r,x)=>({income:r.income+x.income,expense:r.expense+x.expense,profit:r.profit+x.profit}),{income:0,expense:0,profit:0});
+ document.getElementById('groupMetrics').innerHTML=[
+   metric('Pemasukan Bulan Ini',rupiah(monthly.income),'Dari pembayaran invoice','green'),
+   metric('Pengeluaran Bulan Ini',rupiah(monthly.expense),'Operasional, payroll dan borongan','amber'),
+   metric('Laba/Rugi Bulan Ini',rupiah(monthly.profit),'Dasar perhitungan bagi hasil',monthly.profit>=0?'purple':'red'),
+   metric('Piutang Invoice',rupiah(a.receivable),a.invoices.length+' invoice','red')
+ ].join('');
+ const max=Math.max(1,...Object.keys(CONFIG).map(c=>Math.max(0,monthProfit(c).profit)));
+ document.getElementById('companyBars').innerHTML=Object.keys(CONFIG).map((c,i)=>{const v=monthProfit(c).profit;return`<div class="barRow"><b>${CONFIG[c].short}</b><div class="barTrack"><div class="barFill ${i===1?'green':i===2?'purple':''}" style="width:${Math.max(2,Math.max(0,v)/max*100)}%"></div></div><span class="money">${rupiah(v)}</span></div>`}).join('');
+ const alerts=[];if(a.receivable>0)alerts.push(['Piutang belum tertagih',rupiah(a.receivable)]);Object.keys(CONFIG).forEach(c=>{if(!DATA[c])alerts.push([CONFIG[c].short,'Backup belum terbaca'])});if(!alerts.length)alerts.push(['Status sistem','Data tersinkron']);
+ document.getElementById('ownerAlerts').innerHTML=alerts.map(x=>`<div class="alertItem"><span>${esc(x[0])}</span><strong>${esc(x[1])}</strong></div>`).join('');
+ document.getElementById('dashboardCompanies').innerHTML=Object.keys(CONFIG).map(c=>companyCard(c)).join('');
+};
+const oldRenderAll=renderAll;
+renderAll=function(){oldRenderAll();renderDashboard()};
+window.addEventListener('storage',()=>setTimeout(renderAll,30));
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){renderAll();if(token)syncAll({silent:true})}});
+setInterval(()=>{renderAll();if(token&&!document.hidden)syncAll({silent:true})},5000);
+setTimeout(renderAll,500);
+})();
+</script>
+
 </body>
 </html>
