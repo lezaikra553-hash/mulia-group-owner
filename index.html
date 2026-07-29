@@ -68,7 +68,7 @@ const ALLOWED_EMAIL='lezaikra553@gmail.com';
 const APP_PASS_HASH='ab8e5ad4977d331baf27a68d4e093e4cbd3e5987476b4c32f00d93f625c1904a';
 const TOKEN_KEY='MULIA_OWNER_GOOGLE_TOKEN';
 const EMAIL_KEY='MULIA_OWNER_GOOGLE_EMAIL';
-const CACHE_KEY='MULIA_OWNER_CACHE_V2_0_3';
+const CACHE_KEY='MULIA_OWNER_CACHE_V2_0_5';
 const CONFIG={
  BERKAH:{
    code:'BERKAH',aliases:['BERKAH','BM'],name:'CV. BERKAH MULIA ADV',short:'Berkah Mulia',
@@ -156,7 +156,7 @@ function updateGoogleUI(msg){
     else auto.textContent='Auto-sync aktif setiap 60 detik';
   }
 }
-function googleLogin(){if(!window.google?.accounts?.oauth2){alert('Layanan Google belum siap. Tunggu beberapa detik lalu coba lagi.');return}const c=google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email',callback:async r=>{if(r.error){alert('Login Google gagal: '+r.error);return}token=r.access_token;sessionStorage.setItem(TOKEN_KEY,token);try{const u=await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+token}}).then(x=>x.json());googleEmail=u.email||'';if(ALLOWED_EMAIL&&googleEmail.toLowerCase()!==ALLOWED_EMAIL.toLowerCase()){token='';sessionStorage.removeItem(TOKEN_KEY);alert('Email tidak diizinkan: '+googleEmail);return}sessionStorage.setItem(EMAIL_KEY,googleEmail)}catch(e){}updateGoogleUI();await syncAll({silent:true});startOwnerAutoSync()}});c.requestAccessToken({prompt:token?'':'consent'})}
+function googleLogin(){if(!window.google?.accounts?.oauth2){alert('Layanan Google belum siap. Tunggu beberapa detik lalu coba lagi.');return}const c=google.accounts.oauth2.initTokenClient({client_id:CLIENT_ID,scope:'https://www.googleapis.com/auth/drive.readonly https://www.googleapis.com/auth/userinfo.email',callback:async r=>{if(r.error){alert('Login Google gagal: '+r.error);return}token=r.access_token;sessionStorage.setItem(TOKEN_KEY,token);try{const u=await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{headers:{Authorization:'Bearer '+token}}).then(x=>x.json());googleEmail=u.email||'';if(ALLOWED_EMAIL&&googleEmail.toLowerCase()!==ALLOWED_EMAIL.toLowerCase()){token='';sessionStorage.removeItem(TOKEN_KEY);alert('Email tidak diizinkan: '+googleEmail);return}sessionStorage.setItem(EMAIL_KEY,googleEmail)}catch(e){}updateGoogleUI();await syncAll({silent:true});startOwnerAutoSync()}});c.requestAccessToken({prompt:token?'':'consent'})}
 async function driveFind(name){
   const safe=String(name||'').replaceAll("'","\\'");
   const q=encodeURIComponent(`name='${safe}' and trashed=false`);
@@ -223,7 +223,7 @@ async function syncAll(options={}){
   if(OWNER_SYNC_BUSY)return;
 
   OWNER_SYNC_BUSY=true;
-  updateGoogleUI('Membaca 3 backup terbaru…');
+  updateGoogleUI('Membaca backup Berkah, DWI, dan AZKIA dari Drive…');
   const errors=[];
   let changed=0;
 
@@ -232,7 +232,7 @@ async function syncAll(options={}){
       try{
         const meta=await driveFind(cfg.file);
         if(!meta){
-          errors.push(cfg.short+': file tidak ditemukan');
+          errors.push(cfg.short+': file '+cfg.file+' tidak ditemukan atau belum diberi akses ke Owner');
           continue;
         }
 
