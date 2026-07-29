@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#0f172a">
-<title>Mulia Group Owner Dashboard — LOGIN TETAP FINAL</title>
+<title>Mulia Group Owner Dashboard V2.0.3 Stable</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
@@ -37,7 +37,7 @@
 </head>
 <body>
 <div id="loginGate"><div class="loginBox"><div class="loginLogo">MG</div><h1>Mulia Group Owner</h1><p>Dashboard konsolidasi read-only untuk CV. Berkah Mulia ADV, PT. Dwi Mulia Advertising, dan PT. Azkia Mulia Perada.</p><div class="field"><label>Password Aplikasi</label><input id="loginPass" type="password" placeholder="Masukkan password" onkeydown="if(event.key==='Enter')appLogin()"></div><button class="btn primary block" onclick="appLogin()">Masuk Dashboard Owner</button><div id="loginError" class="loginError">Password salah.</div></div></div>
-<header class="topbar"><div class="brand">MULIA GROUP OWNER<small>CONSOLIDATED MANAGEMENT DASHBOARD • READ ONLY • FINAL FIX</small></div><div class="topActions"><button class="btn green" onclick="googleLogin()">Login Google</button><button class="btn primary" onclick="syncAll({manual:true})">Sinkronkan Sekarang</button><button id="installAppBtn" class="btn amber hidden" onclick="installOwnerApp()">📲 Instal Aplikasi</button><button class="btn light" onclick="document.getElementById('manualFiles').click()">Import JSON</button><input id="manualFiles" type="file" accept=".json" multiple hidden onchange="manualImport(event)"><button class="btn red" onclick="logoutApp()">Keluar</button></div><div class="statusMini"><span id="googleDot" class="dot"></span><span id="googleStatus">Google belum login</span><br><span id="autoSyncStatus">Auto-sync menunggu login</span></div></header>
+<header class="topbar"><div class="brand">MULIA GROUP OWNER<small>CONSOLIDATED MANAGEMENT DASHBOARD • READ ONLY • V2.0.3 STABLE</small></div><div class="topActions"><button class="btn green" onclick="googleLogin()">Login Google</button><button class="btn primary" onclick="syncAll({manual:true})">Sinkronkan Sekarang</button><button id="installAppBtn" class="btn amber hidden" onclick="installOwnerApp()">📲 Instal Aplikasi</button><button class="btn light" onclick="document.getElementById('manualFiles').click()">Import JSON</button><input id="manualFiles" type="file" accept=".json" multiple hidden onchange="manualImport(event)"><button class="btn red" onclick="logoutApp()">Keluar</button></div><div class="statusMini"><span id="googleDot" class="dot"></span><span id="googleStatus">Google belum login</span><br><span id="autoSyncStatus">Auto-sync menunggu login</span></div></header>
 <aside class="sidebar">
 <button class="navBtn active" data-page="dashboard" onclick="openPage('dashboard',this)">📊 Dashboard Group</button>
 <button class="navBtn" data-page="companies" onclick="openPage('companies',this)">🏢 Perusahaan</button>
@@ -59,7 +59,7 @@
 <section id="page-projects" class="page"><div class="pageHead"><div><h1>Project Monitoring</h1><p>Pipeline dibentuk dari data proyek dan dokumen yang tersedia.</p></div></div><div id="projectMetrics" class="metrics"></div><div class="card"><div class="tableWrap"><table class="dataTable"><thead><tr><th>Perusahaan</th><th>Project / Pekerjaan</th><th>Customer</th><th>Status</th><th>Sumber</th><th class="money">Nilai</th></tr></thead><tbody id="projectRows"></tbody></table></div></div></section>
 <section id="page-hr" class="page"><div class="pageHead"><div><h1>SDM & Payroll</h1><p>Ringkasan karyawan, periode payroll, gaji dan borongan.</p></div><button class="btn dark" onclick="exportHRCSV()">Export CSV</button></div><div id="hrMetrics" class="metrics"></div><div class="card"><div class="tableWrap"><table class="dataTable"><thead><tr><th>Perusahaan</th><th>Nama</th><th>Jabatan</th><th>Periode</th><th class="money">Gaji Pokok</th><th class="money">Estimasi Bersih</th></tr></thead><tbody id="hrRows"></tbody></table></div></div><div class="card"><div class="cardHead"><h3>Borongan Berkah Mulia</h3><span id="boronganCount"></span></div><div class="tableWrap"><table class="dataTable"><thead><tr><th>Tanggal</th><th>Nama</th><th>Keterangan</th><th class="money">Jumlah</th><th class="money">Harga Satuan</th><th class="money">Total</th></tr></thead><tbody id="boronganRows"></tbody></table></div></div></section>
 <section id="page-profit" class="page"><div class="pageHead"><div><h1>Bagi Hasil</h1><p>Pengaturan dan ringkasan pembagian laba yang tersimpan pada masing-masing perusahaan.</p></div></div><div id="profitMetrics" class="metrics"></div><div class="card"><div class="tableWrap"><table class="dataTable"><thead><tr><th>Perusahaan</th><th>Penerima / Pos</th><th>Persentase</th><th>Periode</th><th class="money">Estimasi Pembagian</th></tr></thead><tbody id="profitRows"></tbody></table></div></div></section>
-<section id="page-reports" class="page"><div class="pageHead"><div><h1>Laporan Owner</h1><p>Cetak laporan konsolidasi atau ekspor data untuk analisis lanjutan.</p></div></div><div class="grid3"><div class="card"><h3>Laporan Konsolidasi</h3><p class="audit">Mencetak halaman dashboard aktif lengkap dengan metrik utama dan ringkasan perusahaan.</p><button class="btn primary" onclick="openPage('dashboard',document.querySelector('[data-page=dashboard]'));setTimeout(()=>window.print(),150)">Print Dashboard</button></div><div class="card"><h3>Export Seluruh Dokumen</h3><p class="audit">Menghasilkan CSV penawaran dan invoice dari ketiga perusahaan.</p><button class="btn green" onclick="exportDocumentsCSV()">Export Dokumen CSV</button></div><div class="card"><h3>Export Snapshot Owner</h3><p class="audit">Menyimpan snapshot konsolidasi untuk arsip lokal. Tidak mengubah data Google Drive.</p><button class="btn dark" onclick="exportSnapshot()">Download Snapshot JSON</button></div></div><div class="card"><div class="cardHead"><h3>Audit Sumber Data</h3><span>Informasi teknis sinkronisasi</span></div><div id="auditData" class="audit"></div></div><div class="card"><div class="cardHead"><h3>Import Manual Backup JSON</h3><span>Cadangan jika Google Drive belum dapat diakses</span></div><div class="fileBox"><input type="file" accept=".json" multiple onchange="manualImport(event)"><p class="audit">Pilih file backup Berkah, Dwi, dan/atau Azkia. Identitas akan dideteksi melalui companyCode, companyName, nama file, dan key storage.</p></div></div></section>
+<section id="page-reports" class="page"><div class="pageHead"><div><h1>Laporan Owner</h1><p>Cetak laporan konsolidasi atau ekspor data untuk analisis lanjutan.</p></div></div><div class="grid3"><div class="card"><h3>Laporan Konsolidasi</h3><p class="audit">Mencetak halaman dashboard aktif lengkap dengan metrik utama dan ringkasan perusahaan.</p><button class="btn primary" onclick="openPage('dashboard',document.querySelector('[data-page=dashboard]'));setTimeout(()=>window.print(),150)">Print Dashboard</button></div><div class="card"><h3>Export Seluruh Dokumen</h3><p class="audit">Menghasilkan CSV penawaran dan invoice dari ketiga perusahaan.</p><button class="btn green" onclick="exportDocumentsCSV()">Export Dokumen CSV</button></div><div class="card"><h3>Export Snapshot Owner</h3><p class="audit">Menyimpan snapshot konsolidasi untuk arsip lokal. Tidak mengubah data Google Drive.</p><button class="btn dark" onclick="exportSnapshot()">Download Snapshot JSON</button></div></div><div class="card"><div class="cardHead"><h3>Audit Sumber Data</h3><span>Informasi teknis sinkronisasi</span></div><div id="auditData" class="audit"></div></div><div class="card"><div class="cardHead"><h3>Import Manual Backup JSON</h3><span>Cadangan jika Google Drive belum dapat diakses</span></div><div class="fileBox"><input type="file" accept=".json" multiple onchange="manualImport(event)"><p class="audit">Pilih file backup operasional Berkah, Dwi, dan/atau Azkia. File Investor Portal tidak dimuat di sini karena mengandung akun login dan harus dikelola terpisah.</p></div></div></section>
 </main>
 <script>
 'use strict';
@@ -68,7 +68,7 @@ const ALLOWED_EMAIL='lezaikra553@gmail.com';
 const APP_PASS_HASH='ab8e5ad4977d331baf27a68d4e093e4cbd3e5987476b4c32f00d93f625c1904a';
 const TOKEN_KEY='MULIA_OWNER_GOOGLE_TOKEN';
 const EMAIL_KEY='MULIA_OWNER_GOOGLE_EMAIL';
-const CACHE_KEY='MULIA_OWNER_CACHE_V1';
+const CACHE_KEY='MULIA_OWNER_CACHE_V2_0_3';
 const CONFIG={
  BERKAH:{
    code:'BERKAH',aliases:['BERKAH','BM'],name:'CV. BERKAH MULIA ADV',short:'Berkah Mulia',
@@ -102,7 +102,7 @@ const CONFIG={
    hr:['AP_ABSENSI_GAJI_V4','AP_ABSENSI_GAJI_V3','azkia_absensi_gaji_kalender_v4','azkia_absensi_gaji_kalender_v3'],
    profit:['AP_BAGI_HASIL_SIMPLE_V1'],
    piece:[],
-   enterprise:['DMA_ENTERPRISE_V2','AP_ENTERPRISE_OPS_V1','AZKIA_MULIA_ENTERPRISE_OPS_V1'],
+   enterprise:['AP_ENTERPRISE_V2','AP_ENTERPRISE_V1','AP_ENTERPRISE_OPS_V1','AZKIA_MULIA_ENTERPRISE_OPS_V1'],
    snapshot:['AP_OWNER_SNAPSHOT_V1'],
    contract:['AP_COMPANY_CONTRACT_V2','AP_COMPANY_CONTRACT_V1']
  }
@@ -113,7 +113,7 @@ let googleEmail=sessionStorage.getItem(EMAIL_KEY)||'';
 let OWNER_SYNC_TIMER=null;
 let OWNER_SYNC_BUSY=false;
 let OWNER_LAST_SYNC=0;
-const OWNER_SYNC_INTERVAL=5000;
+const OWNER_SYNC_INTERVAL=60000;
 const OWNER_STALE_MINUTES=15;
 
 function num(v){const n=Number(v);return Number.isFinite(n)?n:0}
@@ -202,6 +202,16 @@ function identify(normalized,fileName=''){
   if(c==='DWI'||c==='DM'||n.includes('DWI')||s.DMA_SALES_DB_V1)return'DWI';
   return null;
 }
+function validateCompanyPayload(code,normalized){
+  const cfg=CONFIG[code];
+  const identified=identify(normalized,normalized?.fileMeta?.name||'');
+  if(!identified) throw new Error('Identitas perusahaan tidak dapat diverifikasi.');
+  if(identified!==code) throw new Error('Identitas file tidak cocok: '+identified);
+  const storage=normalized?.storage||{};
+  const hasPrimary=[...cfg.sales,...cfg.cash,...cfg.hr,...cfg.enterprise,...cfg.snapshot,...cfg.contract].some(k=>storage[k]!=null);
+  if(!hasPrimary) throw new Error('Backup tidak berisi data utama '+cfg.short+'.');
+  return true;
+}
 async function syncAll(options={}){
   const manual=!!options.manual;
   const silent=!!options.silent;
@@ -235,10 +245,7 @@ async function syncAll(options={}){
 
         const payload=await driveRead(meta.id);
         const normalized=normalizePayload(payload,meta);
-        const identified=identify(normalized,meta.name);
-        if(identified&&identified!==code){
-          throw new Error('Identitas file tidak cocok: '+identified);
-        }
+        validateCompanyPayload(code,normalized);
         DATA[code]=normalized;
         changed++;
       }catch(e){
@@ -298,7 +305,7 @@ window.addEventListener('offline',()=>{
   updateGoogleUI('Offline • memakai cache terakhir');
 });
 
-function manualImport(ev){const files=[...(ev.target.files||[])];files.forEach(f=>{const r=new FileReader();r.onload=()=>{try{const p=JSON.parse(r.result);const n=normalizePayload(p,{name:f.name,modifiedTime:new Date(f.lastModified).toISOString(),source:'manual'});const code=identify(n,f.name);if(!code)throw new Error('Identitas perusahaan tidak dikenali');DATA[code]=n;saveCache();renderAll()}catch(e){alert('Import '+f.name+' gagal: '+e.message)}};r.readAsText(f)});ev.target.value=''}
+function manualImport(ev){const files=[...(ev.target.files||[])];files.forEach(f=>{const r=new FileReader();r.onload=()=>{try{const p=JSON.parse(r.result);const n=normalizePayload(p,{name:f.name,modifiedTime:new Date(f.lastModified).toISOString(),source:'manual'});const code=identify(n,f.name);if(!code)throw new Error('Identitas perusahaan tidak dikenali');validateCompanyPayload(code,n);DATA[code]=n;saveCache();renderAll()}catch(e){alert('Import '+f.name+' gagal: '+e.message)}};r.readAsText(f)});ev.target.value=''}
 function saveCache(){try{localStorage.setItem(CACHE_KEY,JSON.stringify(DATA))}catch(e){}}
 function loadCache(){try{const d=JSON.parse(localStorage.getItem(CACHE_KEY)||'null');if(d)DATA={...DATA,...d}}catch(e){}}
 function invoiceSubtotal(inv){return (Array.isArray(inv?.items)?inv.items:[]).reduce((s,x)=>s+num(x.qty??x.quantity)*num(x.price??x.harga??x.unitPrice),0)}
@@ -539,8 +546,8 @@ renderDashboard=function(){
 const oldRenderAll=renderAll;
 renderAll=function(){oldRenderAll();renderDashboard()};
 window.addEventListener('storage',()=>setTimeout(renderAll,30));
-document.addEventListener('visibilitychange',()=>{if(!document.hidden){renderAll();if(token)syncAll({silent:true})}});
-setInterval(()=>{renderAll();if(token&&!document.hidden)syncAll({silent:true})},5000);
+// Tampilan lokal diperbarui berkala; sinkron Drive ditangani satu listener utama di atas.
+setInterval(()=>{if(!document.hidden)renderAll()},30000);
 setTimeout(renderAll,500);
 })();
 </script>
