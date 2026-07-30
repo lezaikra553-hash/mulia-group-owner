@@ -1,41 +1,18 @@
-# Mulia Group Owner Command Center
+# Mulia Group Owner Command Center — Mobile Ready
 
-Aplikasi owner statis untuk mengonsolidasikan data:
+Upload seluruh isi folder ini ke root repository GitHub:
 
-- CV Berkah Mulia Adv
-- PT Dwi Mulia Advertising
-- PT Azkia Mulia Perada
+- `index.html`
+- `manifest.webmanifest`
+- `sw.js`
+- `vercel.json`
+- folder `icons`
 
-## Cara upload ke GitHub dan Vercel
+## Agar Login Google berfungsi di HP
 
-1. Buat repository baru atau buka repository Vercel yang sudah ada.
-2. Upload seluruh file dalam folder ini ke root repository:
-   - `index.html`
-   - `styles.css`
-   - `app.js`
-   - `vercel.json`
-3. Commit perubahan.
-4. Vercel akan melakukan deploy otomatis.
+1. Buka aplikasi dari URL Vercel **HTTPS**, bukan membuka `index.html` langsung dari penyimpanan HP.
+2. Di Google Cloud Console, tambahkan URL Vercel sebagai **Authorized JavaScript origin** pada OAuth Client ID yang digunakan aplikasi.
+3. Gunakan email yang diizinkan oleh aplikasi.
+4. Izinkan pop-up/cookie Google saat browser meminta izin.
 
-Tidak membutuhkan proses build atau instalasi NPM.
-
-## Login awal
-
-- Username: `owner`
-- Password: `owner123`
-
-Segera ganti password melalui menu **Pengaturan**.
-
-## Cara sinkronisasi data
-
-1. Buka aplikasi perusahaan masing-masing.
-2. Gunakan menu backup/export JSON.
-3. Buka Owner Command Center.
-4. Masuk ke **Sinkronisasi Data**.
-5. Pilih backup JSON sesuai perusahaan.
-
-Data disimpan pada localStorage browser aplikasi owner. Untuk memindahkan ke laptop lain, gunakan **Download Backup Owner** dan **Pulihkan Backup Owner**.
-
-## Catatan penting
-
-Karena aplikasi perusahaan dan aplikasi owner berada pada domain berbeda, browser tidak mengizinkan pembacaan localStorage lintas domain. Oleh sebab itu versi statis ini menggunakan mekanisme impor backup JSON. Untuk sinkronisasi real-time lintas perangkat diperlukan database online/API, misalnya Supabase, Firebase, atau backend khusus.
+Data perusahaan tetap read-only dan diambil otomatis dari file JSON Google Drive yang telah ditentukan di `CONFIG`.
