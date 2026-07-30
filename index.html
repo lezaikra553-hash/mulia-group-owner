@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#0f172a">
-<title>Mulia Group Owner Dashboard V2.0.4 Stable</title>
+<title>Mulia Group Owner Dashboard V2.0.5 Berkah V3 Sync</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
@@ -37,7 +37,7 @@
 </head>
 <body>
 <div id="loginGate"><div class="loginBox"><div class="loginLogo">MG</div><h1>Mulia Group Owner</h1><p>Dashboard konsolidasi read-only untuk CV. Berkah Mulia ADV, PT. Dwi Mulia Advertising, dan PT. Azkia Mulia Perada.</p><div class="field"><label>Password Aplikasi</label><input id="loginPass" type="password" placeholder="Masukkan password" onkeydown="if(event.key==='Enter')appLogin()"></div><button class="btn primary block" onclick="appLogin()">Masuk Dashboard Owner</button><div id="loginError" class="loginError">Password salah.</div></div></div>
-<header class="topbar"><div class="brand">MULIA GROUP OWNER<small>CONSOLIDATED MANAGEMENT DASHBOARD • READ ONLY • V2.0.4 STABLE</small></div><div class="topActions"><button class="btn green" onclick="googleLogin()">Login Google</button><button class="btn primary" onclick="syncAll({manual:true})">Sinkronkan Sekarang</button><button id="installAppBtn" class="btn amber hidden" onclick="installOwnerApp()">📲 Instal Aplikasi</button><button class="btn light" onclick="document.getElementById('manualFiles').click()">Import JSON</button><input id="manualFiles" type="file" accept=".json" multiple hidden onchange="manualImport(event)"><button class="btn red" onclick="logoutApp()">Keluar</button></div><div class="statusMini"><span id="googleDot" class="dot"></span><span id="googleStatus">Google belum login</span><br><span id="autoSyncStatus">Auto-sync menunggu login</span></div></header>
+<header class="topbar"><div class="brand">MULIA GROUP OWNER<small>CONSOLIDATED MANAGEMENT DASHBOARD • READ ONLY • V2.0.5 BERKAH V3 SYNC</small></div><div class="topActions"><button class="btn green" onclick="googleLogin()">Login Google</button><button class="btn primary" onclick="syncAll({manual:true})">Sinkronkan Sekarang</button><button id="installAppBtn" class="btn amber hidden" onclick="installOwnerApp()">📲 Instal Aplikasi</button><button class="btn light" onclick="document.getElementById('manualFiles').click()">Import JSON</button><input id="manualFiles" type="file" accept=".json" multiple hidden onchange="manualImport(event)"><button class="btn red" onclick="logoutApp()">Keluar</button></div><div class="statusMini"><span id="googleDot" class="dot"></span><span id="googleStatus">Google belum login</span><br><span id="autoSyncStatus">Auto-sync menunggu login</span></div></header>
 <aside class="sidebar">
 <button class="navBtn active" data-page="dashboard" onclick="openPage('dashboard',this)">📊 Dashboard Group</button>
 <button class="navBtn" data-page="companies" onclick="openPage('companies',this)">🏢 Perusahaan</button>
@@ -68,11 +68,11 @@ const ALLOWED_EMAIL='lezaikra553@gmail.com';
 const APP_PASS_HASH='ab8e5ad4977d331baf27a68d4e093e4cbd3e5987476b4c32f00d93f625c1904a';
 const TOKEN_KEY='MULIA_OWNER_GOOGLE_TOKEN';
 const EMAIL_KEY='MULIA_OWNER_GOOGLE_EMAIL';
-const CACHE_KEY='MULIA_OWNER_CACHE_V2_0_6';
+const CACHE_KEY='MULIA_OWNER_CACHE_V2_0_7_BERKAH_V3';
 const CONFIG={
  BERKAH:{
    code:'BERKAH',aliases:['BERKAH','BM'],name:'CV. BERKAH MULIA ADV',short:'Berkah Mulia',
-   file:'berkah_mulia_adv_rc2_portal_sync_latest.json',
+   file:'berkah_mulia_portal_v3_sync_latest.json',
    sales:['BM_SALES_DB_V1'],
    cash:['BM_KAS_BESAR_IMPORT_EXCEL_V1','BM_KAS_BESAR_ACTIVE_DB','BM_KAS_IMPORT_EXCEL_V1'],
    hr:['BM_ABSENSI_GAJI_V4','BM_ABSENSI_GAJI_V3'],
