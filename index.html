@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <meta name="theme-color" content="#0f172a">
-<title>Mulia Group Owner Dashboard V2.0.5 Berkah V3 Sync</title>
+<title>Mulia Group Owner Dashboard V2.0.8 Owner Sync Fixed</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
@@ -37,7 +37,7 @@
 </head>
 <body>
 <div id="loginGate"><div class="loginBox"><div class="loginLogo">MG</div><h1>Mulia Group Owner</h1><p>Dashboard konsolidasi read-only untuk CV. Berkah Mulia ADV, PT. Dwi Mulia Advertising, dan PT. Azkia Mulia Perada.</p><div class="field"><label>Password Aplikasi</label><input id="loginPass" type="password" placeholder="Masukkan password" onkeydown="if(event.key==='Enter')appLogin()"></div><button class="btn primary block" onclick="appLogin()">Masuk Dashboard Owner</button><div id="loginError" class="loginError">Password salah.</div></div></div>
-<header class="topbar"><div class="brand">MULIA GROUP OWNER<small>CONSOLIDATED MANAGEMENT DASHBOARD • READ ONLY • V2.0.5 BERKAH V3 SYNC</small></div><div class="topActions"><button class="btn green" onclick="googleLogin()">Login Google</button><button class="btn primary" onclick="syncAll({manual:true})">Sinkronkan Sekarang</button><button id="installAppBtn" class="btn amber hidden" onclick="installOwnerApp()">📲 Instal Aplikasi</button><button class="btn light" onclick="document.getElementById('manualFiles').click()">Import JSON</button><input id="manualFiles" type="file" accept=".json" multiple hidden onchange="manualImport(event)"><button class="btn red" onclick="logoutApp()">Keluar</button></div><div class="statusMini"><span id="googleDot" class="dot"></span><span id="googleStatus">Google belum login</span><br><span id="autoSyncStatus">Auto-sync menunggu login</span></div></header>
+<header class="topbar"><div class="brand">MULIA GROUP OWNER<small>CONSOLIDATED MANAGEMENT DASHBOARD • READ ONLY • V2.0.8 OWNER SYNC FIXED</small></div><div class="topActions"><button class="btn green" onclick="googleLogin()">Login Google</button><button class="btn primary" onclick="syncAll({manual:true})">Sinkronkan Sekarang</button><button id="installAppBtn" class="btn amber hidden" onclick="installOwnerApp()">📲 Instal Aplikasi</button><button class="btn light" onclick="document.getElementById('manualFiles').click()">Import JSON</button><input id="manualFiles" type="file" accept=".json" multiple hidden onchange="manualImport(event)"><button class="btn red" onclick="logoutApp()">Keluar</button></div><div class="statusMini"><span id="googleDot" class="dot"></span><span id="googleStatus">Google belum login</span><br><span id="autoSyncStatus">Auto-sync menunggu login</span></div></header>
 <aside class="sidebar">
 <button class="navBtn active" data-page="dashboard" onclick="openPage('dashboard',this)">📊 Dashboard Group</button>
 <button class="navBtn" data-page="companies" onclick="openPage('companies',this)">🏢 Perusahaan</button>
@@ -68,7 +68,7 @@ const ALLOWED_EMAIL='lezaikra553@gmail.com';
 const APP_PASS_HASH='ab8e5ad4977d331baf27a68d4e093e4cbd3e5987476b4c32f00d93f625c1904a';
 const TOKEN_KEY='MULIA_OWNER_GOOGLE_TOKEN';
 const EMAIL_KEY='MULIA_OWNER_GOOGLE_EMAIL';
-const CACHE_KEY='MULIA_OWNER_CACHE_V2_0_7_BERKAH_V3';
+const CACHE_KEY='MULIA_OWNER_CACHE_V2_0_8_OWNER_SYNC_FIXED';
 const CONFIG={
  BERKAH:{
    code:'BERKAH',aliases:['BERKAH','BM'],name:'CV. BERKAH MULIA ADV',short:'Berkah Mulia',
@@ -79,7 +79,7 @@ const CONFIG={
    profit:['BM_BAGI_HASIL_SIMPLE_V1'],
    piece:['BERKAH_MULIA_BORONGAN_V1'],
    enterprise:['BM_ENTERPRISE_V2','BERKAH_MULIA_ENTERPRISE_OPS_V1'],
-   snapshot:['BM_OWNER_SNAPSHOT_V1'],
+   snapshot:['BM_OWNER_SNAPSHOT_V3','BM_OWNER_SNAPSHOT_V2','BM_OWNER_SNAPSHOT_V1'],
    contract:['BM_COMPANY_CONTRACT_V2','BM_COMPANY_CONTRACT_V1']
  },
  DWI:{
@@ -91,7 +91,7 @@ const CONFIG={
    profit:['DMA_BAGI_HASIL_SIMPLE_V1','DMA_PROFIT_SHARING_V1','DM_BAGI_HASIL_SIMPLE_V1'],
    piece:[],
    enterprise:['DMA_ENTERPRISE_V2','DWI_MULIA_ENTERPRISE_OPS_V1'],
-   snapshot:['DM_OWNER_SNAPSHOT_V1'],
+   snapshot:['DM_OWNER_SNAPSHOT_V3','DM_OWNER_SNAPSHOT_V2','DM_OWNER_SNAPSHOT_V1'],
    contract:['DM_COMPANY_CONTRACT_V2','DM_COMPANY_CONTRACT_V1']
  },
  AZKIA:{
@@ -103,7 +103,7 @@ const CONFIG={
    profit:['AP_BAGI_HASIL_SIMPLE_V1','AP_PROFIT_SHARING_V1'],
    piece:[],
    enterprise:['AP_ENTERPRISE_V2','AP_ENTERPRISE_V1','AP_ENTERPRISE_OPS_V1','AZKIA_MULIA_ENTERPRISE_OPS_V1'],
-   snapshot:['AP_OWNER_SNAPSHOT_V1'],
+   snapshot:['AP_OWNER_SNAPSHOT_V3','AP_OWNER_SNAPSHOT_V2','AP_OWNER_SNAPSHOT_V1'],
    contract:['AP_COMPANY_CONTRACT_V2','AP_COMPANY_CONTRACT_V1']
  }
 };
@@ -174,12 +174,15 @@ function normalizePayload(payload,meta={}){
   const embeddedSnapshot=
     payload?.ownerSnapshot||
     payload?.snapshot||
-    first(storage,['BM_OWNER_SNAPSHOT_V1','DM_OWNER_SNAPSHOT_V1','AP_OWNER_SNAPSHOT_V1'])||
+    first(storage,['BM_OWNER_SNAPSHOT_V3','DM_OWNER_SNAPSHOT_V3','AP_OWNER_SNAPSHOT_V3',
+                    'BM_OWNER_SNAPSHOT_V2','DM_OWNER_SNAPSHOT_V2','AP_OWNER_SNAPSHOT_V2',
+                    'BM_OWNER_SNAPSHOT_V1','DM_OWNER_SNAPSHOT_V1','AP_OWNER_SNAPSHOT_V1'])||
     null;
   const embeddedContract=
     payload?.companyContract||
     payload?.contract||
-    first(storage,['BM_COMPANY_CONTRACT_V2','DM_COMPANY_CONTRACT_V2','AP_COMPANY_CONTRACT_V2',
+    first(storage,['BM_COMPANY_CONTRACT_V3','DM_COMPANY_CONTRACT_V3','AP_COMPANY_CONTRACT_V3',
+                   'BM_COMPANY_CONTRACT_V2','DM_COMPANY_CONTRACT_V2','AP_COMPANY_CONTRACT_V2',
                    'BM_COMPANY_CONTRACT_V1','DM_COMPANY_CONTRACT_V1','AP_COMPANY_CONTRACT_V1'])||
     null;
   return{
@@ -543,6 +546,49 @@ renderDashboard=function(){
  document.getElementById('ownerAlerts').innerHTML=alerts.map(x=>`<div class="alertItem"><span>${esc(x[0])}</span><strong>${esc(x[1])}</strong></div>`).join('');
  document.getElementById('dashboardCompanies').innerHTML=Object.keys(CONFIG).map(c=>companyCard(c)).join('');
 };
+
+// Snapshot V3 menjadi fallback resmi bila struktur database operasional berbeda versi.
+const _baseCashSummary=cashSummary;
+cashSummary=function(code){
+ const base=_baseCashSummary(code), snap=getCompany(code).snapshot||{}, sc=snap.cash||{};
+ const hasBase=base.count>0||base.income!==0||base.expense!==0;
+ if(hasBase)return base;
+ return{
+   ...base,
+   income:num(sc.income),
+   expense:num(sc.expense),
+   balance:num(sc.closingBalance??sc.balance),
+   bank:num(sc.bankAvailable??sc.bank??sc.closingBalance),
+   payroll:num(snap.payroll?.total??base.payroll)
+ };
+};
+const _baseProjectsOf=projectsOf;
+projectsOf=function(code){
+ const rows=_baseProjectsOf(code);
+ if(rows.length)return rows;
+ const snap=getCompany(code).snapshot||{};
+ const p=Array.isArray(snap.pipeline?.projects)?snap.pipeline.projects:[];
+ return p.map(x=>({code,name:x.name??x.project??x.documentNo??'-',customer:x.customer??'-',
+   status:x.status??'Aktif',source:'Snapshot Owner V3',value:num(x.value??x.total),
+   quoteNo:x.quoteNo??'',invoiceNo:x.invoiceNo??'',paid:num(x.paid),outstanding:num(x.outstanding)}));
+};
+const _baseProfitRowsOf=profitRowsOf;
+profitRowsOf=function(code){
+ const rows=_baseProfitRowsOf(code);
+ if(rows.length)return rows;
+ const snap=getCompany(code).snapshot||{}, p=snap.profitSharing||{};
+ const shares=Array.isArray(p.shares)?p.shares:[];
+ const period=getCompany(code).hr?.period??snap.payroll?.period??'-';
+ const profit=Math.max(0,num(snap.cash?.closingBalance));
+ return shares.map(x=>({code,name:x.name??x.nama??'-',pct:num(x.pct??x.percent),period,
+   amount:profit*num(x.pct??x.percent)/100}));
+};
+// Hapus cache versi Owner lama saja; database perusahaan tidak disentuh.
+try{
+ Object.keys(localStorage).filter(k=>k.startsWith('MULIA_OWNER_CACHE_')&&k!==CACHE_KEY)
+   .forEach(k=>localStorage.removeItem(k));
+}catch(e){}
+
 const oldRenderAll=renderAll;
 renderAll=function(){oldRenderAll();renderDashboard()};
 window.addEventListener('storage',()=>setTimeout(renderAll,30));
