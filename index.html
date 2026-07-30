@@ -68,7 +68,7 @@ const ALLOWED_EMAIL='lezaikra553@gmail.com';
 const APP_PASS_HASH='ab8e5ad4977d331baf27a68d4e093e4cbd3e5987476b4c32f00d93f625c1904a';
 const TOKEN_KEY='MULIA_OWNER_GOOGLE_TOKEN';
 const EMAIL_KEY='MULIA_OWNER_GOOGLE_EMAIL';
-const CACHE_KEY='MULIA_OWNER_CACHE_V2_0_5';
+const CACHE_KEY='MULIA_OWNER_CACHE_V2_0_6';
 const CONFIG={
  BERKAH:{
    code:'BERKAH',aliases:['BERKAH','BM'],name:'CV. BERKAH MULIA ADV',short:'Berkah Mulia',
@@ -351,12 +351,12 @@ function cashSummary(code){
     balance,
     bank,
     bankRaw:rawBank,
-    payroll:num(sc.totalPayroll),
+    payroll:num(sc.totalPayroll)||tx.filter(x=>String(x.category||'').toUpperCase()==='ABSENSI_PAYROLL'||String(x.description||'').toLowerCase().includes('gaji karyawan')).reduce((sum,x)=>sum+x.amount,0),
     borongan:num(sc.totalBoronganKaryawan),
     count:tx.length
   };
 }
-function employeesOf(code){const c=getCompany(code),emps=Array.isArray(c.hr?.employees)?c.hr.employees:[],period=c.hr?.period??'-';return emps.map(e=>{const salary=num(e.salary??e.gajiPokok??e.basicSalary);const byEmployee=c.hr?.payroll?.[e.id]||{};const payroll=(period&&byEmployee&&typeof byEmployee==='object'&&byEmployee[period]&&typeof byEmployee[period]==='object')?byEmployee[period]:byEmployee;const net=num(payroll?.net??payroll?.gajiBersih??payroll?.netSalary??e.netSalary)||salary;return{code,name:e.name??e.nama??'-',role:e.role??e.position??e.jabatan??'-',period,salary,net,raw:e}})}
+function employeesOf(code){const c=getCompany(code),emps=Array.isArray(c.hr?.employees)?c.hr.employees:[],period=c.hr?.period??'-',cashTx=cashTransactions(code);return emps.map(e=>{const salary=num(e.salary??e.gajiPokok??e.basicSalary);const byEmployee=c.hr?.payroll?.[e.id]||{};const payroll=(period&&byEmployee&&typeof byEmployee==='object'&&byEmployee[period]&&typeof byEmployee[period]==='object')?byEmployee[period]:byEmployee;const cashPayroll=cashTx.find(x=>String(x.category||'').toUpperCase()==='ABSENSI_PAYROLL'&&String(x.description||'').toUpperCase().includes(String(e.name??e.nama??'').toUpperCase())&&(!period||String(x.date||'').slice(0,7)===period));const net=num(payroll?.net??payroll?.gajiBersih??payroll?.netSalary??e.netSalary)||num(cashPayroll?.amount)||salary;return{code,name:e.name??e.nama??'-',role:e.role??e.position??e.jabatan??e.dept??'-',period,salary,net,raw:e}})}
 function pieceRows(){const p=getCompany('BERKAH').piece;const arr=Array.isArray(p)?p:(Array.isArray(p?.rows)?p.rows:Array.isArray(p?.data)?p.data:[]);return arr.map(x=>({date:x.date??x.tanggal??'',name:x.name??x.nama??'-',description:x.description??x.keterangan??'-',qty:num(x.qty??x.jumlah),price:num(x.price??x.harga??x.hargaSatuan),total:num(x.total??x.totalHarga)||(num(x.qty??x.jumlah)*num(x.price??x.harga??x.hargaSatuan))}))}
 function projectsOf(code){const c=getCompany(code),p=Array.isArray(c.enterprise?.projects)?c.enterprise.projects:[];if(p.length)return p.map(x=>({code,name:x.name??x.project??'-',customer:x.customer??'-',status:x.status??'Aktif',source:'Data Project',value:num(x.value??x.total)}));return docsOf(code).filter(x=>x.type==='PENAWARAN').map(x=>({code,name:x.raw?.subject??x.raw?.perihal??x.number,customer:x.customer,status:x.status,source:'Penawaran',value:x.total}))}
 function profitRowsOf(code){const c=getCompany(code),p=c.profit||{},shares=Array.isArray(p.shares)?p.shares:Array.isArray(p.recipients)?p.recipients:Array.isArray(p.penerima)?p.penerima:[];const cs=cashSummary(code),period=p.period??c.hr?.period??'-';return shares.map(x=>({code,name:x.name??x.nama??x.label??'-',pct:num(x.percent??x.pct??x.persentase),period,amount:Math.max(0,cs.balance)*num(x.percent??x.pct??x.persentase)/100}))}
