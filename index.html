@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#111827">
+  <title>Mulia Group Owner Command Center</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="loginScreen" class="login-screen">
+    <form id="loginForm" class="login-card">
+      <div class="brand-mark">MG</div>
+      <h1>Owner Command Center</h1>
+      <p>Mulia Advertising Group</p>
+      <label>Nama pengguna<input id="loginUser" autocomplete="username" required value="owner"></label>
+      <label>Password<input id="loginPass" type="password" autocomplete="current-password" required></label>
+      <button class="btn primary" type="submit">Masuk</button>
+      <small>Password awal: <b>owner123</b>. Segera ganti melalui Pengaturan.</small>
+    </form>
+  </div>
+
+  <div id="app" class="app hidden">
+    <aside class="sidebar">
+      <div class="brand"><div class="brand-mark small">MG</div><div><strong>Mulia Group</strong><span>Owner Center</span></div></div>
+      <nav id="nav">
+        <button data-page="dashboard" class="active">◫ Dashboard Grup</button>
+        <button data-page="companies">▦ Perusahaan</button>
+        <button data-page="cash">◉ Konsolidasi Kas</button>
+        <button data-page="receivables">▤ Invoice & Piutang</button>
+        <button data-page="projects">◇ Monitoring Proyek</button>
+        <button data-page="payroll">♙ Absensi & Payroll</button>
+        <button data-page="profit">◎ Bagi Hasil & Modal</button>
+        <button data-page="imports">⇩ Sinkronisasi Data</button>
+        <button data-page="reports">▧ Pusat Laporan</button>
+        <button data-page="settings">⚙ Pengaturan</button>
+      </nav>
+      <div class="sidebar-foot"><span id="lastSync">Belum ada sinkronisasi</span><button id="logoutBtn">Keluar</button></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div><button id="menuBtn" class="icon-btn">☰</button><h2 id="pageTitle">Dashboard Grup</h2><div id="pageSubtitle">Ringkasan seluruh perusahaan</div></div>
+        <div class="top-actions">
+          <select id="globalCompanyFilter"><option value="ALL">Semua Perusahaan</option></select>
+          <input id="globalPeriod" type="month">
+          <button id="refreshBtn" class="btn">↻ Refresh</button>
+          <button id="printBtn" class="btn primary">🖨 Print</button>
+        </div>
+      </header>
+
+      <section id="page-dashboard" class="page active">
+        <div id="healthBanner" class="banner warning">Belum ada data. Impor backup JSON pada menu Sinkronisasi Data.</div>
+        <div class="kpi-grid" id="kpiGrid"></div>
+        <div class="grid two">
+          <article class="card"><div class="card-head"><h3>Perbandingan Perusahaan</h3></div><div id="companyComparison"></div></article>
+          <article class="card"><div class="card-head"><h3>Arus Kas Bulanan</h3></div><div id="cashChart" class="chart"></div></article>
+        </div>
+        <div class="grid two">
+          <article class="card"><div class="card-head"><h3>Piutang Terbesar</h3></div><div id="topReceivables"></div></article>
+          <article class="card"><div class="card-head"><h3>Aktivitas Terbaru</h3></div><div id="recentActivity"></div></article>
+        </div>
+      </section>
+
+      <section id="page-companies" class="page"><div id="companyCards" class="company-grid"></div></section>
+      <section id="page-cash" class="page"><div class="toolbar"><select id="cashType"><option value="ALL">Semua transaksi</option><option value="IN">Pemasukan</option><option value="OUT">Pengeluaran</option></select><input id="cashSearch" placeholder="Cari transaksi"><button id="exportCash" class="btn">Export CSV</button></div><div class="kpi-grid compact" id="cashKpis"></div><article class="card"><div class="table-wrap"><table><thead><tr><th>Tanggal</th><th>Perusahaan</th><th>Keterangan</th><th>Kategori</th><th class="num">Pemasukan</th><th class="num">Pengeluaran</th></tr></thead><tbody id="cashTable"></tbody></table></div></article></section>
+      <section id="page-receivables" class="page"><div class="toolbar"><select id="invoiceStatus"><option value="ALL">Semua status</option><option value="LUNAS">Lunas</option><option value="PIUTANG">Belum lunas</option><option value="TERLAMBAT">Terlambat</option></select><input id="invoiceSearch" placeholder="Cari invoice/pelanggan"><button id="exportInvoices" class="btn">Export CSV</button></div><div class="kpi-grid compact" id="invoiceKpis"></div><article class="card"><div class="table-wrap"><table><thead><tr><th>Invoice</th><th>Perusahaan</th><th>Pelanggan</th><th>Tanggal</th><th>Jatuh Tempo</th><th class="num">Nilai</th><th class="num">Terbayar</th><th class="num">Sisa</th><th>Status</th></tr></thead><tbody id="invoiceTable"></tbody></table></div></article></section>
+      <section id="page-projects" class="page"><div class="toolbar"><input id="projectSearch" placeholder="Cari proyek"><button id="exportProjects" class="btn">Export CSV</button></div><div class="kpi-grid compact" id="projectKpis"></div><div id="projectList" class="project-grid"></div></section>
+      <section id="page-payroll" class="page"><div class="kpi-grid compact" id="payrollKpis"></div><div class="grid two"><article class="card"><div class="card-head"><h3>Ringkasan Perusahaan</h3></div><div id="payrollByCompany"></div></article><article class="card"><div class="card-head"><h3>Data Karyawan</h3></div><div id="employeeTable" class="table-wrap"></div></article></div></section>
+      <section id="page-profit" class="page"><div class="kpi-grid compact" id="profitKpis"></div><div id="profitContent" class="grid two"></div></section>
+      <section id="page-imports" class="page">
+        <div class="grid three" id="importCards"></div>
+        <article class="card"><div class="card-head"><h3>Riwayat Sinkronisasi</h3><button id="clearImports" class="btn danger">Hapus Semua Snapshot</button></div><div id="importHistory"></div></article>
+      </section>
+      <section id="page-reports" class="page"><div id="reportCards" class="report-grid"></div></section>
+      <section id="page-settings" class="page">
+        <div class="grid two"><article class="card"><div class="card-head"><h3>Identitas Grup</h3></div><form id="groupForm" class="form-grid"><label>Nama Grup<input id="groupName"></label><label>Nama Owner<input id="ownerName"></label><label>Alamat<textarea id="groupAddress"></textarea></label><label>Telepon<input id="groupPhone"></label><label>Email<input id="groupEmail"></label><button class="btn primary" type="submit">Simpan Identitas</button></form></article>
+        <article class="card"><div class="card-head"><h3>Keamanan</h3></div><form id="passwordForm" class="form-grid"><label>Password lama<input id="oldPassword" type="password"></label><label>Password baru<input id="newPassword" type="password" minlength="6"></label><button class="btn primary" type="submit">Ganti Password</button></form><hr><button id="exportOwnerBackup" class="btn">Download Backup Owner</button><label class="btn file-btn">Pulihkan Backup Owner<input id="restoreOwnerBackup" type="file" accept="application/json"></label></article></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
